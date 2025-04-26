@@ -322,9 +322,9 @@ class ImageGraph:
         """
         size = len(self.vertices)
         matrix = [[0 for _ in range(size)] for _ in range(size)]
-        for i, vertex in enumerate(self.vertices):
+        for vertex in self.vertices:
             for neighbor_index in vertex.edges:
-                matrix[i][neighbor_index] = 1
+                matrix[vertex.index][neighbor_index] = 1
         return matrix
 
     def bfs(self, start_index, color):
