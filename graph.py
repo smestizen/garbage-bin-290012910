@@ -364,11 +364,14 @@ class ImageGraph:
             vertex = self.vertices[current]
             if vertex.visited:
                 continue
-            if vertex.color == start_color:
-                vertex.visit_and_set_color(color)
-                for neighbor in vertex.edges:
-                    if not self.vertices[neighbor].visited:
-                        queue.enqueue(neighbor)
+            if vertex.color != start_color:
+                continue
+            vertex.visited = True
+            vertex.color = color
+            print(f"Visited vertex {vertex.index}")
+            for neighbor in vertex.edges:
+                if not self.vertices[neighbor].visited:
+                    queue.enqueue(neighbor)
     def dfs(self, start_index, color):
         """
         You must implement this algorithm using a Stack WITHOUT using recursion.
@@ -406,11 +409,14 @@ class ImageGraph:
             vertex = self.vertices[current]
             if vertex.visited:
                 continue
-            if vertex.color == start_color:
-                vertex.visit_and_set_color(color)
-                for neighbor in vertex.edges:
-                    if not self.vertices[neighbor].visited:
-                        stack.push(neighbor)
+            if vertex.color != start_color:
+                continue
+            vertex.visited = True
+            vertex.color = color
+            print(f"Visited vertex {vertex.index}")
+            for neighbor in reversed(vertex.edges):
+                if not self.vertices[neighbor].visited:
+                    stack.push(neighbor)
 
 def create_graph(data):
     """
