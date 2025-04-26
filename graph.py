@@ -419,8 +419,10 @@ def create_graph(data):
           and the search color.
     """
     lines = data.strip().splitlines()
+
     image_size = int(lines[0])
     num_vertices = int(lines[1])
+
     img_graph = ImageGraph(image_size)
     position_map = {}
     for i in range(2, 2 + num_vertices):
@@ -433,7 +435,7 @@ def create_graph(data):
         position_map[(x, y)] = index
     for vertex in img_graph.vertices:
         x, y = vertex.x, vertex.y
-        neighbors = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+        neighbors = [(x+1, y), (x-1, y), (x, y+1), (x, y-1)]
         for nx, ny in neighbors:
             if (nx, ny) in position_map:
                 neighbor_idx = position_map[(nx, ny)]
@@ -441,6 +443,8 @@ def create_graph(data):
     start_index = int(lines[2 + num_vertices])
     new_color = lines[2 + num_vertices + 1]
     return img_graph, start_index, new_color
+
+
 
 def main():
     """
