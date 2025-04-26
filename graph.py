@@ -321,7 +321,7 @@ class ImageGraph:
         post: return a 2D list of integers representing the adjacency matrix.
         """
         size = len(self.vertices)
-        matrix = [[0 for _ in range(size)] for _ in range(size)
+        matrix = [[0 for _ in range(size)] for _ in range(size)]
         for i, vertex in enumerate(self.vertices):
             for neighbor_index in vertex.edges:
                 matrix[i][neighbor_index] = 1
