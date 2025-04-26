@@ -392,21 +392,21 @@ class ImageGraph:
         post: every vertex that matches the start index's color will be recolored
               to the given color
         """
-    self.reset_visited()
-    print("Starting DFS; initial state:")
-    self.print_image()
-    start_color = self.vertices[start_index].color
-    stack = Stack()
-    stack.push(start_index)
-    while not stack.is_empty():
-        current = stack.pop()
-        vertex = self.vertices[current]
-        if vertex.visited:
-            continue
-        if vertex.color == start_color:
-            vertex.visit_and_set_color(color)
-            for neighbor in vertex.edges:
-                stack.push(neighbor)
+        self.reset_visited()
+        print("Starting DFS; initial state:")
+        self.print_image()
+        start_color = self.vertices[start_index].color
+        stack = Stack()
+        stack.push(start_index)
+        while not stack.is_empty():
+            current = stack.pop()
+            vertex = self.vertices[current]
+            if vertex.visited:
+                continue
+            if vertex.color == start_color:
+                vertex.visit_and_set_color(color)
+                for neighbor in vertex.edges:
+                    stack.push(neighbor)
 
 def create_graph(data):
     """
