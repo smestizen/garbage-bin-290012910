@@ -16,8 +16,6 @@ UT EID 1: jrz554
 UT EID 2:
 """
 
-import sys
-
 # -----------------------PRINTING LOGIC, DON'T WORRY ABOUT THIS PART----------------------------
 RESET_CHAR = "\u001b[0m"  # Code to reset the terminal color
 COLOR_DICT = {
