@@ -321,13 +321,12 @@ class ImageGraph:
         post: return a 2D list of integers representing the adjacency matrix.
         """
         size = len(self.vertices)
-        matrix = [[0 for _ in range(size)] for _ in range(size)]
-        for vertex in self.vertices:
-            for neighbor in vertex.edges:
-                matrix[vertex.index][neighbor] = 1
+        matrix = [[0 for _ in range(size)] for _ in range(size)
+        for i, vertex in enumerate(self.vertices):
+            for neighbor_index in vertex.edges:
+                matrix[i][neighbor_index] = 1
         return matrix
 
-    # TODO: Modify this method. You may delete this comment when you are done.
     def bfs(self, start_index, color):
         """
         You must implement this algorithm using a Queue.
@@ -354,11 +353,12 @@ class ImageGraph:
         self.reset_visited()
         print("Starting BFS; initial state:")
         self.print_image()
-
+        if start_index < 0 or start_index >= len(self.vertices):
+            print(f"Invalid start index: {start_index}")
+            return
         start_color = self.vertices[start_index].color
         queue = Queue()
         queue.enqueue(start_index)
-
         while not queue.is_empty():
             current = queue.dequeue()
             vertex = self.vertices[current]
@@ -367,9 +367,9 @@ class ImageGraph:
             if vertex.color == start_color:
                 vertex.visit_and_set_color(color)
                 for neighbor in vertex.edges:
-                    queue.enqueue(neighbor)
-
-    def dfs(self, start_index, color):
+                    if not self.vertices[neighbor].visited:
+                        queue.enqueue(neighbor)
+        def dfs(self, start_index, color):
         """
         You must implement this algorithm using a Stack WITHOUT using recursion.
 
@@ -395,6 +395,9 @@ class ImageGraph:
         self.reset_visited()
         print("Starting DFS; initial state:")
         self.print_image()
+        if start_index < 0 or start_index >= len(self.vertices):
+            print(f"Invalid start index: {start_index}")
+            return
         start_color = self.vertices[start_index].color
         stack = Stack()
         stack.push(start_index)
@@ -406,7 +409,8 @@ class ImageGraph:
             if vertex.color == start_color:
                 vertex.visit_and_set_color(color)
                 for neighbor in vertex.edges:
-                    stack.push(neighbor)
+                    if not self.vertices[neighbor].visited:
+                        stack.push(neighbor)
 
 def create_graph(data):
     """
@@ -443,9 +447,7 @@ def create_graph(data):
     start_index = int(lines[2 + num_vertices])
     new_color = lines[2 + num_vertices + 1]
     return img_graph, start_index, new_color
-
-
-
+    
 def main():
     """
     The main function that drives the program execution.
@@ -462,7 +464,6 @@ def main():
     graph.bfs(start_index, color)
     graph, start_index, color = create_graph(data)
     graph.dfs(start_index, color)
-
 
 if __name__ == "__main__":
     main()
