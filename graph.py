@@ -323,8 +323,8 @@ class ImageGraph:
         size = len(self.vertices)
         matrix = [[0 for _ in range(size)] for _ in range(size)]
         for vertex in self.vertices:
-            for neighbor_index in vertex.edges:
-                matrix[vertex.index][neighbor_index] = 1
+            for neighbor in vertex.edges:
+                matrix[vertex.index][neighbor] = 1
         return matrix
 
     def bfs(self, start_index, color):
@@ -423,29 +423,22 @@ def create_graph(data):
           and the search color.
     """
     lines = data.strip().splitlines()
-
     image_size = int(lines[0])
     num_vertices = int(lines[1])
-
     img_graph = ImageGraph(image_size)
     position_map = {}
     for i in range(2, 2 + num_vertices):
-        x, y, color = lines[i].split(",")
-        x = int(x)
-        y = int(y)
-        index = i - 2
-        vertex = ColoredVertex(index, x, y, color)
+        parts = lines[i].split(",")
+        vertex = ColoredVertex(i - 2, int(parts[0]), int(parts[1]), parts[2].strip())
         img_graph.vertices.append(vertex)
-        position_map[(x, y)] = index
+        position_map[(vertex.x, vertex.y)] = vertex.index
     for vertex in img_graph.vertices:
-        x, y = vertex.x, vertex.y
-        neighbors = [(x+1, y), (x-1, y), (x, y+1), (x, y-1)]
-        for nx, ny in neighbors:
-            if (nx, ny) in position_map:
-                neighbor_idx = position_map[(nx, ny)]
-                vertex.add_edge(neighbor_idx)
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+            neighbor_coords = (vertex.x + dx, vertex.y + dy)
+            if neighbor_coords in position_map:
+                vertex.add_edge(position_map[neighbor_coords])
     start_index = int(lines[2 + num_vertices])
-    new_color = lines[2 + num_vertices + 1]
+    new_color = lines[3 + num_vertices]
     return img_graph, start_index, new_color
     
 def main():
