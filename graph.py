@@ -353,25 +353,22 @@ class ImageGraph:
         self.reset_visited()
         print("Starting BFS; initial state:")
         self.print_image()
-        if start_index < 0 or start_index >= len(self.vertices):
-            print(f"Invalid start index: {start_index}")
-            return
-        start_color = self.vertices[start_index].color
+        start_vertex = self.vertices[start_index]
+        target_color = start_vertex.color
         queue = Queue()
         queue.enqueue(start_index)
         while not queue.is_empty():
-            current = queue.dequeue()
-            vertex = self.vertices[current]
-            if vertex.visited:
+            current_index = queue.dequeue()
+            current_vertex = self.vertices[current_index]
+            if current_vertex.visited:
                 continue
-            if vertex.color != start_color:
-                continue
-            vertex.visited = True
-            vertex.color = color
-            print(f"Visited vertex {vertex.index}")
-            for neighbor in vertex.edges:
-                if not self.vertices[neighbor].visited:
-                    queue.enqueue(neighbor)
+            if current_vertex.color == target_color:
+                current_vertex.visit_and_set_color(color)
+                self.print_image()
+                for neighbor_index in current_vertex.edges:
+                    neighbor = self.vertices[neighbor_index]
+                    if not neighbor.visited and neighbor.color == target_color:
+                        queue.enqueue(neighbor_index)
     def dfs(self, start_index, color):
         """
         You must implement this algorithm using a Stack WITHOUT using recursion.
@@ -398,25 +395,22 @@ class ImageGraph:
         self.reset_visited()
         print("Starting DFS; initial state:")
         self.print_image()
-        if start_index < 0 or start_index >= len(self.vertices):
-            print(f"Invalid start index: {start_index}")
-            return
-        start_color = self.vertices[start_index].color
+        start_vertex = self.vertices[start_index]
+        target_color = start_vertex.color
         stack = Stack()
         stack.push(start_index)
         while not stack.is_empty():
-            current = stack.pop()
-            vertex = self.vertices[current]
-            if vertex.visited:
+            current_index = stack.pop()
+            current_vertex = self.vertices[current_index]
+            if current_vertex.visited:
                 continue
-            if vertex.color != start_color:
-                continue
-            vertex.visited = True
-            vertex.color = color
-            print(f"Visited vertex {vertex.index}")
-            for neighbor in reversed(vertex.edges):
-                if not self.vertices[neighbor].visited:
-                    stack.push(neighbor)
+            if current_vertex.color == target_color:
+                current_vertex.visit_and_set_color(color)
+                self.print_image()
+                for neighbor_index in reversed(current_vertex.edges):
+                    neighbor = self.vertices[neighbor_index]
+                    if not neighbor.visited and neighbor.color == target_color:
+                        stack.push(neighbor_index)
 
 def create_graph(data):
     """
@@ -429,24 +423,33 @@ def create_graph(data):
           and the search color.
     """
     lines = data.strip().splitlines()
-    image_size = int(lines[0])
-    num_vertices = int(lines[1])
-    img_graph = ImageGraph(image_size)
-    position_map = {}
-    for i in range(2, 2 + num_vertices):
-        parts = lines[i].split(",")
-        vertex = ColoredVertex(i - 2, int(parts[0]), int(parts[1]), parts[2].strip())
-        img_graph.vertices.append(vertex)
-        position_map[(vertex.x, vertex.y)] = vertex.index
-    for vertex in img_graph.vertices:
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-            neighbor_coords = (vertex.x + dx, vertex.y + dy)
-            if neighbor_coords in position_map:
-                vertex.add_edge(position_map[neighbor_coords])
-    start_index = int(lines[2 + num_vertices])
-    new_color = lines[3 + num_vertices]
-    return img_graph, start_index, new_color
-    
+    line_index = 0
+    image_size = int(lines[line_index])
+    line_index += 1
+    graph = ImageGraph(image_size)
+    num_vertices = int(lines[line_index])
+    line_index += 1
+    for i in range(num_vertices):
+        parts = lines[line_index].split(",")
+        x = int(parts[0])
+        y = int(parts[1])
+        color = parts[2].strip()
+        vertex = ColoredVertex(i, x, y, color)
+        graph.vertices.append(vertex)
+        line_index += 1
+    num_edges = int(lines[line_index])
+    line_index += 1
+    for i in range(num_edges):
+        parts = lines[line_index].split(",")
+        from_index = int(parts[0])
+        to_index = int(parts[1])
+        graph.vertices[from_index].add_edge(to_index)
+        graph.vertices[to_index].add_edge(from_index)
+        line_index += 1
+    parts = lines[line_index].split(",")
+    start_index = int(parts[0])
+    color = parts[1].strip()
+    return graph, start_index, color
 def main():
     """
     The main function that drives the program execution.
@@ -454,12 +457,12 @@ def main():
     This function will not be tested, but you should
     implement it to test your code visually.
     """
-    data = sys.stdin.read()
-    graph, start_index, color = create_graph(data)
     print("Adjacency Matrix:")
     matrix = graph.create_adjacency_matrix()
+    print("[")
     for row in matrix:
         print(row)
+    print("]")
     graph.bfs(start_index, color)
     graph, start_index, color = create_graph(data)
     graph.dfs(start_index, color)
