@@ -369,7 +369,7 @@ class ImageGraph:
                 for neighbor in vertex.edges:
                     if not self.vertices[neighbor].visited:
                         queue.enqueue(neighbor)
-        def dfs(self, start_index, color):
+    def dfs(self, start_index, color):
         """
         You must implement this algorithm using a Stack WITHOUT using recursion.
 
